@@ -1,7 +1,9 @@
 const express = require("express");
 const multer = require("multer");
 const { GridFsStorage } = require("multer-gridfs-storage");
-const url = "mongodb://localhost:27017/images";
+require("dotenv").config();
+
+const url = process.env.MONGO_DB_URL;
 
 // Create a storage object with a given configuration
 const storage = new GridFsStorage({
@@ -10,9 +12,10 @@ const storage = new GridFsStorage({
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
       return {
         bucketName: "photos",
+        filename: `${Date.now()}_${file.originalname}`,
       };
     } else {
-      return null;
+      return `${Date.now()}_${file.originalname}`;
     }
   },
 });
@@ -25,7 +28,14 @@ const app = express();
 // Upload your files as usual
 app.post("/upload/image", upload.single("avatar"), (req, res, next) => {
   /*....*/
-  res.send({ message: "Uploaded", id: req.file.id.toString() });
+  const file = req.file;
+  console.log({ file });
+  res.send({
+    message: "Uploaded",
+    id: file.id,
+    name: file.filename,
+    contentType: file.contentType,
+  });
 });
 
 const server = app.listen(process.env.PORT || 8765, function () {
