@@ -72,7 +72,6 @@ app.get("/images", async (req, res) => {
 });
 
 app.get("/download/:filename", async (req, res) => {
-  console.log({ filename: req.params.filename });
   try {
     await mongoClient.connect();
 
