@@ -13,12 +13,14 @@ const mongoClient = new MongoClient(url);
 const storage = new GridFsStorage({
   url,
   file: (req, file) => {
+    //If it is an image, save to photos bucket
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
       return {
         bucketName: "photos",
         filename: `${Date.now()}_${file.originalname}`,
       };
     } else {
+      //Otherwise save to default bucket
       return `${Date.now()}_${file.originalname}`;
     }
   },
@@ -29,10 +31,9 @@ const upload = multer({ storage });
 
 const app = express();
 
-// Upload your files as usual
 app.post("/upload/image", upload.single("avatar"), (req, res) => {
-  /*....*/
   const file = req.file;
+  // Respond with the file details
   res.send({
     message: "Uploaded",
     id: file.id,
