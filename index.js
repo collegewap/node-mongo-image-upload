@@ -91,7 +91,7 @@ app.get("/download/:filename", async (req, res) => {
     });
 
     downloadStream.on("error", function (data) {
-      return res.status(404).write({ error: "Image not found" });
+      return res.status(404).send({ error: "Image not found" });
     });
 
     downloadStream.on("end", () => {
